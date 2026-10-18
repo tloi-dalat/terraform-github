@@ -5,6 +5,7 @@ variables {
   github_app_installation_id = "1"
   github_app_private_key     = "mock"
   ci_app_id                  = 42
+  import_repositories        = false
 }
 
 run "every_repo_gets_its_rulesets" {
@@ -52,5 +53,17 @@ run "merge_methods_default_to_squash_on_main_and_merge_on_release" {
       [for rs in github_repository_ruleset.release : join(",", rs.rules[0].pull_request[0].allowed_merge_methods) == "merge"],
     ]))
     error_message = "main must be squash-only and release merge-commit-only."
+  }
+}
+
+run "repo_settings" {
+  command = plan
+
+  assert {
+    condition = alltrue([
+      for r in github_repository.this :
+      !r.allow_rebase_merge && r.allow_auto_merge && r.delete_branch_on_merge && r.squash_merge_commit_title == "PR_TITLE" && r.merge_commit_title == "PR_TITLE"
+    ])
+    error_message = "Every repo: no rebase merge, auto-merge on, head branches deleted, commit titles from the PR title."
   }
 }

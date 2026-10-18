@@ -24,3 +24,8 @@ variable "ci_app_id" {
   description = "App ID of the CI GitHub App (tloi-ci), the bot allowed to push to gitops repos' main (TF_VAR_ci_app_id)"
   type        = number
 }
+
+variable "import_repositories" {
+  type    = bool
+  default = true
+}
