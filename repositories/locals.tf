@@ -10,6 +10,8 @@ locals {
       linear_history    = try(r.linear_history, false)
       resolve_threads   = try(r.resolve_threads, false)
       last_push_review  = try(r.last_push_review, false)
+      merge_main        = try(r.merge_methods.main, ["squash"])
+      merge_release     = try(r.merge_methods.release, ["merge"])
       checks_main       = flatten(try(r.checks.main, []))
       checks_release    = flatten(try(r.checks.release, []))
     }
