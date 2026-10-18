@@ -13,12 +13,13 @@ quiz:
 
 | Option | Default | Rule |
 |---|---|---|
-| `approvals` | `0` | Required approving reviews. A PR is always required |
-| `code_owner_review` | `false` | Require a CODEOWNERS approval |
+| `approvals` | `1` | Required approving reviews |
+| `code_owner_review` | `true` | One approval must come from a code owner of the changed files |
 | `up_to_date` | `false` | Branch must be up to date with the base before merging |
 | `linear_history` | `false` | `main` only: no merge commits |
 | `resolve_threads` | `false` | All review conversations resolved before merging |
-| `last_push_review` | `false` | The last push must be approved by someone other than its author |
+| `last_push_review` | `true` | The last push must be approved by someone other than its author |
+| `teams` | by profile | Team → permission (`pull`, `triage`, `push`, `maintain`, `admin`) |
 | `merge_methods.main` | `[squash]` | Allowed merge methods into `main` (`merge`, `squash`, `rebase`) |
 | `merge_methods.release` | `[merge]` | Allowed merge methods into `release` |
 | `checks.main`, `checks.release` | `[]` | Required status checks, named exactly as on a PR: the job's name, or for a reusable workflow `<caller job> / <its job>` (e.g. `check-docker / docker`). YAML anchors can reuse a list |
@@ -42,6 +43,24 @@ Always on: PR before merging, stale approvals dismissed on new commits, no force
 Org admins can merge a PR that fails a rule (`bypass_mode: pull_request`); nobody can push past one. Skipped
 required checks count as passing.
 
+## Teams
+
+| Profile | `sre` | `swe` |
+|---|---|---|
+| `library` | maintain | none: PRs from forks |
+| `gitops`, `app` | maintain | push |
+
+Library repos run workflows with infra secrets (R2, Cloudflare, the terraform App); anyone who can push a branch
+can change a workflow and read them. Fork PRs get no secrets.
+
+Who must approve is in each repo's `.github/CODEOWNERS`. A code owner needs write access, which this gives.
+
+| Repo | Code owners |
+|---|---|
+| control-plane | `sre` or `swe`; `.github/` and `bootstrap/` only `sre` |
+| charts, reusable-workflow, terraform-* | `sre` |
+| app repos | `swe`; `.github/` only `sre` |
+
 ## Repository settings
 
 `settings.tf` imports every repo listed in `repositories.yaml` and manages only its pull request settings:
@@ -49,11 +68,17 @@ required checks count as passing.
 - squash and merge commits on, rebase off;
 - auto-merge on;
 - head branches deleted after a merge;
-- the default commit message for squash and merge commits is the PR title.
+- the default commit message for squash and merge commits is the PR title;
+- secret scanning and push protection on (free for public repos).
 
 The import blocks don't do anything once a repo is in state. Other settings (description, issues, wiki, ...) stay
-manual. Removing a repo from `repositories.yaml` fails (`prevent_destroy`); run
+manual.
+
+Removing a repo from `repositories.yaml` fails (`prevent_destroy`); run
 `terraform state rm 'github_repository.this["<name>"]'` first.
+
+`organization.tf`: `GITHUB_TOKEN` is read-only unless a workflow asks for more (`permissions:`), and Actions can't
+approve PRs.
 
 ## Gotchas
 

@@ -34,8 +34,6 @@ judge-server:
 
 control-plane:
   profile: gitops
-  approvals: 1
-  code_owner_review: true
   checks:
     main:
       - lint / lint

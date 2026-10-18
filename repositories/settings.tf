@@ -20,6 +20,15 @@ resource "github_repository" "this" {
   squash_merge_commit_title   = "PR_TITLE"
   squash_merge_commit_message = "BLANK"
 
+  security_and_analysis {
+    secret_scanning {
+      status = "enabled"
+    }
+    secret_scanning_push_protection {
+      status = "enabled"
+    }
+  }
+
   archive_on_destroy = true
 
   lifecycle {
@@ -34,7 +43,6 @@ resource "github_repository" "this" {
       is_template,
       allow_update_branch,
       pages,
-      security_and_analysis,
       template,
     ]
   }
