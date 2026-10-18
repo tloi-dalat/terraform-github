@@ -62,8 +62,17 @@ run "repo_settings" {
   assert {
     condition = alltrue([
       for r in github_repository.this :
-      !r.allow_rebase_merge && r.allow_auto_merge && r.delete_branch_on_merge && r.squash_merge_commit_title == "PR_TITLE" && r.merge_commit_title == "PR_TITLE"
+      !r.allow_rebase_merge && r.allow_auto_merge && r.delete_branch_on_merge && r.squash_merge_commit_title == "PR_TITLE" && r.merge_commit_title == "PR_TITLE" && r.security_and_analysis[0].secret_scanning_push_protection[0].status == "enabled"
     ])
-    error_message = "Every repo: no rebase merge, auto-merge on, head branches deleted, commit titles from the PR title."
+    error_message = "Every repo: no rebase merge, auto-merge on, head branches deleted, commit titles from the PR title, push protection on."
+  }
+}
+
+run "every_repo_needs_a_code_owner_approval_and_sre_access" {
+  command = plan
+
+  assert {
+    condition     = alltrue([for name, r in local.repos : r.approvals >= 1 && r.code_owner_review && contains(keys(r.teams), "sre")])
+    error_message = "Every repo needs 1 approval, code owner review and the sre team."
   }
 }
