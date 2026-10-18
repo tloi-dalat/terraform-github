@@ -69,7 +69,11 @@ Who must approve is in each repo's `.github/CODEOWNERS`. A code owner needs writ
 - auto-merge on;
 - head branches deleted after a merge;
 - the default commit message for squash and merge commits is the PR title;
-- secret scanning and push protection on (free for public repos).
+- secret scanning and push protection on;
+- Dependabot alerts and security update PRs off (version updates still come from `.github/dependabot.yaml`).
+
+No org code security configuration may be enforced on these repos (Settings → Code security → Configurations):
+it blocks changing these per repo and the apply fails with 422.
 
 The import blocks don't do anything once a repo is in state. Other settings (description, issues, wiki, ...) stay
 manual.
