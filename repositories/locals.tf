@@ -6,6 +6,10 @@ locals {
       profile           = r.profile
       approvals         = try(r.approvals, 0)
       code_owner_review = try(r.code_owner_review, false)
+      up_to_date        = try(r.up_to_date, false)
+      linear_history    = try(r.linear_history, false)
+      resolve_threads   = try(r.resolve_threads, false)
+      last_push_review  = try(r.last_push_review, false)
       checks_main       = flatten(try(r.checks.main, []))
       checks_release    = flatten(try(r.checks.release, []))
     }

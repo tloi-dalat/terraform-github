@@ -23,21 +23,22 @@ resource "github_repository_ruleset" "main" {
   }
 
   rules {
-    deletion         = true
-    non_fast_forward = true
+    deletion                = true
+    non_fast_forward        = true
+    required_linear_history = each.value.linear_history
 
     pull_request {
       required_approving_review_count   = each.value.approvals
       require_code_owner_review         = each.value.code_owner_review
       dismiss_stale_reviews_on_push     = true
-      require_last_push_approval        = false
-      required_review_thread_resolution = false
+      require_last_push_approval        = each.value.last_push_review
+      required_review_thread_resolution = each.value.resolve_threads
     }
 
     dynamic "required_status_checks" {
       for_each = length(each.value.checks_main) > 0 ? [1] : []
       content {
-        strict_required_status_checks_policy = false
+        strict_required_status_checks_policy = each.value.up_to_date
         dynamic "required_check" {
           for_each = each.value.checks_main
           content {
@@ -88,14 +89,14 @@ resource "github_repository_ruleset" "release" {
       required_approving_review_count   = each.value.approvals
       require_code_owner_review         = each.value.code_owner_review
       dismiss_stale_reviews_on_push     = true
-      require_last_push_approval        = false
-      required_review_thread_resolution = false
+      require_last_push_approval        = each.value.last_push_review
+      required_review_thread_resolution = each.value.resolve_threads
     }
 
     dynamic "required_status_checks" {
       for_each = length(each.value.checks_release) > 0 ? [1] : []
       content {
-        strict_required_status_checks_policy = false
+        strict_required_status_checks_policy = each.value.up_to_date
         dynamic "required_check" {
           for_each = each.value.checks_release
           content {
