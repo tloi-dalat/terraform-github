@@ -39,11 +39,21 @@ Always on: PR before merging, stale approvals dismissed on new commits, no force
 - Upstream syncs into `main` need a merge commit: an org admin ticks "bypass rules" on the PR and picks
   **Create a merge commit**.
 
-The repository settings (Settings → General → Pull Requests) must still allow squash and merge commits, or the
-ruleset can't offer them. Turn on "Automatically delete head branches" there too.
-
 Org admins can merge a PR that fails a rule (`bypass_mode: pull_request`); nobody can push past one. Skipped
 required checks count as passing.
+
+## Repository settings
+
+`settings.tf` imports every repo listed in `repositories.yaml` and manages only its pull request settings:
+
+- squash and merge commits on, rebase off;
+- auto-merge on;
+- head branches deleted after a merge;
+- the default commit message for squash and merge commits is the PR title.
+
+The import blocks don't do anything once a repo is in state. Other settings (description, issues, wiki, ...) stay
+manual. Removing a repo from `repositories.yaml` fails (`prevent_destroy`); run
+`terraform state rm 'github_repository.this["<name>"]'` first.
 
 ## Gotchas
 
