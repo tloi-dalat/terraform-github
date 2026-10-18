@@ -42,3 +42,15 @@ run "only_gitops_repos_let_the_ci_app_push" {
     error_message = "Only gitops repositories may list the CI App as a bypass actor."
   }
 }
+
+run "merge_methods_default_to_squash_on_main_and_merge_on_release" {
+  command = plan
+
+  assert {
+    condition = alltrue(flatten([
+      [for rs in github_repository_ruleset.main : join(",", rs.rules[0].pull_request[0].allowed_merge_methods) == "squash"],
+      [for rs in github_repository_ruleset.release : join(",", rs.rules[0].pull_request[0].allowed_merge_methods) == "merge"],
+    ]))
+    error_message = "main must be squash-only and release merge-commit-only."
+  }
+}

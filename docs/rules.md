@@ -19,6 +19,8 @@ quiz:
 | `linear_history` | `false` | `main` only: no merge commits |
 | `resolve_threads` | `false` | All review conversations resolved before merging |
 | `last_push_review` | `false` | The last push must be approved by someone other than its author |
+| `merge_methods.main` | `[squash]` | Allowed merge methods into `main` (`merge`, `squash`, `rebase`) |
+| `merge_methods.release` | `[merge]` | Allowed merge methods into `release` |
 | `checks.main`, `checks.release` | `[]` | Required status checks, named exactly as on a PR: the job's name, or for a reusable workflow `<caller job> / <its job>` (e.g. `check-docker / docker`). YAML anchors can reuse a list |
 
 Always on: PR before merging, stale approvals dismissed on new commits, no force pushes, no deletion.
@@ -31,13 +33,14 @@ Always on: PR before merging, stale approvals dismissed on new commits, no force
 
 ## Merge methods
 
-Merge methods are repository settings, not rules (the provider can't set them per branch yet). In each repo's
-Settings → General → Pull Requests:
+- `main`: squash only, so the PR title becomes the commit message.
+- `release`: merge commit only. A squash leaves `release` with a commit `main` doesn't have, and every later
+  `main` → `release` PR shows old changes again or conflicts.
+- Upstream syncs into `main` need a merge commit: an org admin ticks "bypass rules" on the PR and picks
+  **Create a merge commit**.
 
-- Allow squash merging (PRs into `main`, so the PR title becomes the commit message) and merge commits.
-- Merge `main` → `release` with **Create a merge commit**, never squash. A squash leaves `release` with a commit
-  `main` doesn't have, and every later `main` → `release` PR shows old changes again or conflicts.
-- Turn on "Automatically delete head branches".
+The repository settings (Settings → General → Pull Requests) must still allow squash and merge commits, or the
+ruleset can't offer them. Turn on "Automatically delete head branches" there too.
 
 Org admins can merge a PR that fails a rule (`bypass_mode: pull_request`); nobody can push past one. Skipped
 required checks count as passing.
