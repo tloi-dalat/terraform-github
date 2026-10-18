@@ -47,3 +47,19 @@ resource "github_repository" "this" {
     ]
   }
 }
+
+resource "github_repository_dependabot_security_updates" "this" {
+  for_each = local.repos
+
+  repository = github_repository.this[each.key].name
+  enabled    = false
+}
+
+resource "github_repository_vulnerability_alerts" "this" {
+  for_each = local.repos
+
+  repository = github_repository.this[each.key].name
+  enabled    = false
+
+  depends_on = [github_repository_dependabot_security_updates.this]
+}
