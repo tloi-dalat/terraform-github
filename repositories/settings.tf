@@ -48,11 +48,12 @@ resource "github_repository" "this" {
   }
 }
 
-resource "github_repository_dependabot_security_updates" "this" {
-  for_each = local.repos
+removed {
+  from = github_repository_dependabot_security_updates.this
 
-  repository = github_repository.this[each.key].name
-  enabled    = false
+  lifecycle {
+    destroy = false
+  }
 }
 
 resource "github_repository_vulnerability_alerts" "this" {
@@ -60,6 +61,4 @@ resource "github_repository_vulnerability_alerts" "this" {
 
   repository = github_repository.this[each.key].name
   enabled    = false
-
-  depends_on = [github_repository_dependabot_security_updates.this]
 }

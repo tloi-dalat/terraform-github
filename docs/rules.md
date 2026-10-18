@@ -70,7 +70,7 @@ Who must approve is in each repo's `.github/CODEOWNERS`. A code owner needs writ
 - head branches deleted after a merge;
 - the default commit message for squash and merge commits is the PR title;
 - secret scanning and push protection on;
-- Dependabot alerts and security update PRs off (version updates still come from `.github/dependabot.yaml`).
+- Dependabot alerts off, which also turns off security update PRs (version updates still come from `.github/dependabot.yaml`).
 
 The import blocks don't do anything once a repo is in state. Other settings (description, issues, wiki, ...) stay
 manual.
