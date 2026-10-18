@@ -1,0 +1,62 @@
+online-judge:
+  profile: app
+  checks:
+    main: &oj-checks
+      - lint
+      - unit
+      - styles
+      - check-migrations / migrations
+      - check-i18n / i18n
+      - check-i18n-django / i18n
+      - check-templates / templates
+      - check-workflows / workflows
+      - check-docker / docker
+      - check-dependencies / dependencies
+      - check-title / title
+    release:
+      - *oj-checks
+      - check-source / source
+
+judge-server:
+  profile: app
+  checks:
+    main: &judge-checks
+      - lint
+      - mypy
+      - test-sdist
+      - check-workflows / workflows
+      - check-docker / docker
+      - check-dependencies / dependencies
+      - check-title / title
+    release:
+      - *judge-checks
+      - check-source / source
+
+control-plane:
+  profile: gitops
+  approvals: 1
+  code_owner_review: true
+  checks:
+    main:
+      - lint / lint
+      - check-title / title
+
+reusable-workflow:
+  profile: library
+  checks:
+    main: [actionlint]
+
+charts:
+  profile: library
+  checks:
+    main: [lint]
+
+terraform-cloudflare:
+  profile: library
+  checks:
+    main: [plan (zero-trust/tunnel)]
+
+terraform-github:
+  profile: library
+  checks:
+    main: [plan (repositories)]
