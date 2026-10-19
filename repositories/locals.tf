@@ -1,11 +1,7 @@
 locals {
   profiles = ["library", "gitops", "app"]
 
-  default_teams = {
-    library = { sre = "maintain" }
-    gitops  = { sre = "maintain", swe = "push" }
-    app     = { sre = "maintain", swe = "push" }
-  }
+  default_teams = { sre = "maintain", swe = "push" }
 
   repos = {
     for name, r in yamldecode(file("${path.module}/repositories.yaml")) : name => {
@@ -20,7 +16,7 @@ locals {
       merge_release     = try(r.merge_methods.release, ["merge"])
       checks_main       = flatten(try(r.checks.main, []))
       checks_release    = flatten(try(r.checks.release, []))
-      teams             = try(r.teams, local.default_teams[r.profile])
+      teams             = try(r.teams, local.default_teams)
     }
   }
 
