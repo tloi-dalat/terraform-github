@@ -68,11 +68,11 @@ run "repo_settings" {
   }
 }
 
-run "every_repo_needs_a_code_owner_approval_and_sre_access" {
+run "every_repo_needs_a_code_owner_approval_and_team_access" {
   command = plan
 
   assert {
-    condition     = alltrue([for name, r in local.repos : r.approvals >= 1 && r.code_owner_review && contains(keys(r.teams), "sre")])
-    error_message = "Every repo needs 1 approval, code owner review and the sre team."
+    condition     = alltrue([for name, r in local.repos : r.approvals >= 1 && r.code_owner_review && r.teams.sre == "maintain" && r.teams.swe == "push"])
+    error_message = "Every repo needs 1 approval, code owner review, sre maintain and swe push."
   }
 }

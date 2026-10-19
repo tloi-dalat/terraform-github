@@ -45,13 +45,7 @@ required checks count as passing.
 
 ## Teams
 
-| Profile | `sre` | `swe` |
-|---|---|---|
-| `library` | maintain | none: PRs from forks |
-| `gitops`, `app` | maintain | push |
-
-Library repos run workflows with infra secrets (R2, Cloudflare, the terraform App); anyone who can push a branch
-can change a workflow and read them. Fork PRs get no secrets.
+Every repo: `sre` maintain, `swe` push. Override per repo with `teams:` in `repositories.yaml`.
 
 Who must approve is in each repo's `.github/CODEOWNERS`. A code owner needs write access, which this gives.
 
