@@ -42,7 +42,7 @@ control-plane:
 reusable-workflow:
   profile: library
   checks:
-    main: [actionlint]
+    main: [actionlint, check-title / title]
 
 charts:
   profile: library
@@ -52,9 +52,9 @@ charts:
 terraform-cloudflare:
   profile: library
   checks:
-    main: [plan (zero-trust/tunnel)]
+    main: [check-terraform / terraform, check-title / title]
 
 terraform-github:
   profile: library
   checks:
-    main: [plan (repositories)]
+    main: [check-terraform / terraform, check-title / title]
