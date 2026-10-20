@@ -17,6 +17,7 @@ locals {
       checks_main       = flatten(try(r.checks.main, []))
       checks_release    = flatten(try(r.checks.release, []))
       teams             = try(r.teams, local.default_teams)
+      atlantis          = try(r.atlantis, false)
     }
   }
 
@@ -25,6 +26,8 @@ locals {
   ]...)
 
   app_repos = { for name, r in local.repos : name => r if r.profile == "app" }
+
+  atlantis_repos = { for name, r in local.repos : name => r if r.atlantis }
 
   admin_bypass = [{ actor_type = "OrganizationAdmin", actor_id = 1, bypass_mode = "pull_request" }]
 

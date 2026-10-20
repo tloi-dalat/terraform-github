@@ -43,6 +43,13 @@ Always on: PR before merging, stale approvals dismissed on new commits, no force
 Org admins can merge a PR that fails a rule (`bypass_mode: pull_request`); nobody can push past one. Skipped
 required checks count as passing.
 
+## Atlantis repos
+
+`atlantis: true` adds a `merge` ruleset on `main`: only the `tloi-atlantis` App can update it, so a PR merges only
+when Atlantis applies it. A PR without Terraform changes still goes through Atlantis: `atlantis plan -p <project>`,
+then `atlantis apply` (no changes) merges it. If Atlantis is down, an org owner disables the `merge` ruleset in the
+repo's Settings → Rules; the next apply turns it back on.
+
 ## Teams
 
 Every repo: `sre` maintain, `swe` push. Override per repo with `teams:` in `repositories.yaml`.
