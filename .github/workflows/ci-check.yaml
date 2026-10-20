@@ -1,0 +1,18 @@
+name: 'check'
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-check-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  terraform:
+    name: check-terraform
+    permissions:
+      contents: read
+    uses: tloi-dalat/reusable-workflow/.github/workflows/terraform-check.yaml@main
+    with:
+      workspaces: '["repositories"]'
+      terraform-version: 1.16.5
