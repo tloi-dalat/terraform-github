@@ -1,4 +1,8 @@
-mock_provider "github" {}
+mock_provider "github" {
+  mock_data "github_app" {
+    defaults = { id = "777" }
+  }
+}
 
 variables {
   github_app_id              = "1"
@@ -74,5 +78,22 @@ run "every_repo_needs_a_code_owner_approval_and_team_access" {
   assert {
     condition     = alltrue([for name, r in local.repos : r.approvals >= 1 && r.code_owner_review && r.teams.sre == "maintain" && r.teams.swe == "push"])
     error_message = "Every repo needs 1 approval, code owner review, sre maintain and swe push."
+  }
+}
+
+run "only_atlantis_merges_atlantis_repos" {
+  command = plan
+
+  assert {
+    condition     = toset(keys(github_repository_ruleset.merge)) == toset(keys(local.atlantis_repos))
+    error_message = "Every atlantis repo needs the merge ruleset, and only those."
+  }
+
+  assert {
+    condition = alltrue([
+      for rs in github_repository_ruleset.merge :
+      rs.rules[0].update && length(rs.bypass_actors) == 1 && rs.bypass_actors[0].actor_type == "Integration" && rs.bypass_actors[0].actor_id == 777
+    ])
+    error_message = "The merge ruleset restricts updates to the Atlantis App alone."
   }
 }

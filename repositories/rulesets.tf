@@ -151,3 +151,33 @@ resource "github_repository_ruleset" "tags" {
     update   = true
   }
 }
+
+data "github_app" "atlantis" {
+  slug = "tloi-atlantis"
+}
+
+resource "github_repository_ruleset" "merge" {
+  for_each = local.atlantis_repos
+
+  repository  = each.key
+  name        = "merge"
+  target      = "branch"
+  enforcement = "active"
+
+  conditions {
+    ref_name {
+      include = ["~DEFAULT_BRANCH"]
+      exclude = []
+    }
+  }
+
+  bypass_actors {
+    actor_type  = "Integration"
+    actor_id    = tonumber(data.github_app.atlantis.id)
+    bypass_mode = "always"
+  }
+
+  rules {
+    update = true
+  }
+}

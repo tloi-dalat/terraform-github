@@ -51,10 +51,12 @@ charts:
 
 terraform-cloudflare:
   profile: library
+  atlantis: true
   checks:
     main: [check-terraform / terraform, check-title / title]
 
 terraform-github:
   profile: library
+  atlantis: true
   checks:
     main: [check-terraform / terraform, check-title / title]
