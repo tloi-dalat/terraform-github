@@ -52,7 +52,8 @@ repo's Settings → Rules; the next apply turns it back on.
 
 ## Teams
 
-Every repo: `sre` maintain, `swe` push. Override per repo with `teams:` in `repositories.yaml`.
+Each repo lists its teams and their roles (`pull`, `triage`, `push`, `maintain`, `admin`) under `teams:` in
+`repositories.yaml`; `sre: maintain` is required. A team left out has no access.
 
 Who must approve is in each repo's `.github/CODEOWNERS`. A code owner needs write access, which this gives.
 
