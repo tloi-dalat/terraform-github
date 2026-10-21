@@ -1,0 +1,22 @@
+owners:
+  - kitsunehivern
+
+teams:
+  sre:
+    name: SRE
+    description: Site Reliability Engineer
+    maintainers:
+      - kitsunehivern
+    members:
+      - dcmquandl
+  swe:
+    name: SWE
+    description: Software Engineer
+    maintainers:
+      - kitsunehivern
+    members:
+      - sotsuba
+      - hdh06
+      - NotTHDAnh
+      - tahoangphuc111
+      - letuanthinh387-byte

@@ -1,5 +1,8 @@
 online-judge:
   profile: app
+  teams:
+    sre: maintain
+    swe: push
   checks:
     main: &oj-checks
       - lint
@@ -19,6 +22,9 @@ online-judge:
 
 judge-server:
   profile: app
+  teams:
+    sre: maintain
+    swe: push
   checks:
     main: &judge-checks
       - lint
@@ -34,6 +40,9 @@ judge-server:
 
 control-plane:
   profile: gitops
+  teams:
+    sre: maintain
+    swe: push
   checks:
     main:
       - lint / lint
@@ -41,22 +50,34 @@ control-plane:
 
 reusable-workflow:
   profile: library
+  teams:
+    sre: maintain
+    swe: push
   checks:
     main: [actionlint, check-title / title]
 
 charts:
   profile: library
+  teams:
+    sre: maintain
+    swe: push
   checks:
     main: [lint]
 
 terraform-cloudflare:
   profile: library
   atlantis: true
+  teams:
+    sre: maintain
+    swe: push
   checks:
     main: [check-terraform / terraform, check-title / title]
 
 terraform-github:
   profile: library
   atlantis: true
+  teams:
+    sre: maintain
+    swe: push
   checks:
     main: [check-terraform / terraform, check-title / title]

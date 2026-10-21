@@ -1,6 +1,11 @@
 version: 3
 automerge: true
 projects:
+  - name: organization
+    dir: organization
+    terraform_version: v1.16.5
+    autoplan:
+      when_modified: ["*.tf", ".terraform.lock.hcl", "*.yaml", "tests/*.hcl"]
   - name: repositories
     dir: repositories
     terraform_version: v1.16.5

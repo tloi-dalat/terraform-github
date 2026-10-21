@@ -55,6 +55,10 @@ resource "github_repository_ruleset" "main" {
       condition     = contains(local.profiles, each.value.profile)
       error_message = "${each.key}: profile must be one of ${join(", ", local.profiles)}, got ${each.value.profile}."
     }
+    precondition {
+      condition     = try(each.value.teams.sre, "") == "maintain"
+      error_message = "${each.key}: list its teams in repositories.yaml, with sre: maintain (sre owns CI and reviews)."
+    }
   }
 }
 
