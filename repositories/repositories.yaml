@@ -81,3 +81,9 @@ terraform-github:
     swe: push
   checks:
     main: [check-terraform / terraform, check-title / title]
+
+.github:
+  profile: library
+  teams:
+    sre: maintain
+    swe: push
