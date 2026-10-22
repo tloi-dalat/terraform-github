@@ -87,3 +87,9 @@ terraform-github:
   teams:
     sre: maintain
     swe: push
+
+status:
+  profile: gitops 
+  teams:
+    sre: maintain
+    swe: push 

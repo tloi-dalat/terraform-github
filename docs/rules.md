@@ -60,7 +60,7 @@ Who must approve is in each repo's `.github/CODEOWNERS`. A code owner needs writ
 | Repo | Code owners |
 |---|---|
 | control-plane | `sre` or `swe`; `.github/` and `bootstrap/` only `sre` |
-| charts, reusable-workflow, terraform-*, .github | `sre` |
+| charts, reusable-workflow, terraform-*, .github, status | `sre` |
 | app repos | `swe`; `.github/` only `sre` |
 
 ## Repository settings
