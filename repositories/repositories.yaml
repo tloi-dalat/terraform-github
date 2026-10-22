@@ -92,4 +92,4 @@ status:
   profile: gitops 
   teams:
     sre: maintain
-    swe: push 
+    swe: push
