@@ -70,14 +70,14 @@ resource "github_repository_ruleset" "main" {
       error_message = "${each.key}: bypass keys must be one of ${join(", ", local.bypass_rulesets)}, got ${join(", ", keys(each.value.bypass))}."
     }
     precondition {
-      condition     = length(try(each.value.bypass.release, [])) == 0 || each.value.profile == "app"
-      error_message = "${each.key}: only app repositories have a release ruleset, so bypass.release does nothing here."
+      condition     = length(try(each.value.bypass.release, [])) == 0 || each.value.profile == "service"
+      error_message = "${each.key}: only service repositories have a release ruleset, so bypass.release does nothing here."
     }
   }
 }
 
 resource "github_repository_ruleset" "release" {
-  for_each = local.app_repos
+  for_each = local.service_repos
 
   repository  = each.key
   name        = "release"
@@ -129,7 +129,7 @@ resource "github_repository_ruleset" "release" {
 }
 
 resource "github_repository_ruleset" "hotfix" {
-  for_each = local.app_repos
+  for_each = local.service_repos
 
   repository  = each.key
   name        = "releases"
@@ -150,7 +150,7 @@ resource "github_repository_ruleset" "hotfix" {
 }
 
 resource "github_repository_ruleset" "tags" {
-  for_each = local.app_repos
+  for_each = local.service_repos
 
   repository  = each.key
   name        = "release tags"

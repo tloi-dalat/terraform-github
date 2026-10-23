@@ -1,5 +1,5 @@
 online-judge:
-  profile: app
+  profile: service
   teams:
     sre: maintain
     swe: push
@@ -21,7 +21,7 @@ online-judge:
       - check-source / source
 
 judge-server:
-  profile: app
+  profile: service
   teams:
     sre: maintain
     swe: push
@@ -39,7 +39,7 @@ judge-server:
       - check-source / source
 
 control-plane:
-  profile: gitops
+  profile: platform
   bypass:
     main: [tloi-ci]
   teams:
@@ -51,7 +51,7 @@ control-plane:
       - check-title / title
 
 reusable-workflow:
-  profile: library
+  profile: platform
   teams:
     sre: maintain
     swe: push
@@ -59,7 +59,7 @@ reusable-workflow:
     main: [actionlint, check-title / title]
 
 charts:
-  profile: library
+  profile: platform
   teams:
     sre: maintain
     swe: push
@@ -67,7 +67,7 @@ charts:
     main: [lint]
 
 terraform-cloudflare:
-  profile: library
+  profile: platform
   bypass:
     merge: [tloi-atlantis]
   teams:
@@ -77,7 +77,7 @@ terraform-cloudflare:
     main: [check-terraform / terraform, check-title / title]
 
 terraform-github:
-  profile: library
+  profile: platform
   bypass:
     merge: [tloi-atlantis]
   teams:
@@ -87,13 +87,13 @@ terraform-github:
     main: [check-terraform / terraform, check-title / title]
 
 .github:
-  profile: library
+  profile: platform
   teams:
     sre: maintain
     swe: push
 
 status:
-  profile: gitops
+  profile: platform
   bypass:
     main: [tloi-status]
   teams:
