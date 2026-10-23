@@ -78,12 +78,6 @@ Each repo lists its teams and their roles (`pull`, `triage`, `push`, `maintain`,
 
 Who must approve is in each repo's `.github/CODEOWNERS`. A code owner needs write access, which this gives.
 
-| Repo | Code owners |
-|---|---|
-| control-plane | `sre` or `swe`; `.github/` and `bootstrap/` only `sre` |
-| charts, reusable-workflow, terraform-*, .github, status | `sre` |
-| service repos | `swe`; `.github/` only `sre` |
-
 ## Repository settings
 
 `settings.tf` imports every repo listed in `repositories.yaml` and manages only its pull request settings:
@@ -103,11 +97,3 @@ Removing a repo from `repositories.yaml` fails (`prevent_destroy`); run
 
 `organization.tf`: `GITHUB_TOKEN` is read-only unless a workflow asks for more (`permissions:`), and Actions can't
 approve PRs.
-
-## Gotchas
-
-- A required check that never runs blocks every PR. Add it here only after its workflow is merged in that repo.
-- control-plane's receiver must push with the CI App listed in its `bypass.main`, or dev deploys are rejected by `main`.
-- A bypass slug that doesn't resolve fails the plan for every repo, not just its own: the App lookup is one
-  `for_each` over the union of all slugs.
-- Tag creation isn't restricted: `release-tag.yaml` creates tags with `GITHUB_TOKEN`. Only moving and deleting are.

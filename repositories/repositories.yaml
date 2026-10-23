@@ -91,11 +91,3 @@ terraform-github:
   teams:
     sre: maintain
     swe: push
-
-status:
-  profile: platform
-  bypass:
-    main: [tloi-status]
-  teams:
-    sre: maintain
-    swe: push
