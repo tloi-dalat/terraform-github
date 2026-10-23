@@ -40,6 +40,8 @@ judge-server:
 
 control-plane:
   profile: gitops
+  bypass:
+    main: [tloi-ci]
   teams:
     sre: maintain
     swe: push
@@ -66,7 +68,8 @@ charts:
 
 terraform-cloudflare:
   profile: library
-  atlantis: true
+  bypass:
+    merge: [tloi-atlantis]
   teams:
     sre: maintain
     swe: push
@@ -75,7 +78,8 @@ terraform-cloudflare:
 
 terraform-github:
   profile: library
-  atlantis: true
+  bypass:
+    merge: [tloi-atlantis]
   teams:
     sre: maintain
     swe: push
@@ -90,6 +94,8 @@ terraform-github:
 
 status:
   profile: gitops
+  bypass:
+    main: [tloi-status]
   teams:
     sre: maintain
     swe: push

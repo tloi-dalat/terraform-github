@@ -8,7 +8,6 @@ variables {
   github_app_id              = "1"
   github_app_installation_id = "1"
   github_app_private_key     = "mock"
-  ci_app_id                  = 42
   import_repositories        = false
 }
 
@@ -36,15 +35,47 @@ run "every_repo_gets_its_rulesets" {
   }
 }
 
-run "only_gitops_repos_let_the_ci_app_push" {
+run "main_bypass_actors_come_from_the_yaml" {
   command = plan
 
   assert {
     condition = alltrue([
       for name, rs in github_repository_ruleset.main :
-      contains([for b in rs.bypass_actors : b.actor_type], "Integration") == (local.repos[name].profile == "gitops")
+      length([for b in rs.bypass_actors : b if b.actor_type == "Integration"]) == length(try(local.repos[name].bypass.main, []))
     ])
-    error_message = "Only gitops repositories may list the CI App as a bypass actor."
+    error_message = "A repo's main ruleset must list exactly the apps named by its bypass.main in repositories.yaml."
+  }
+
+  assert {
+    condition = alltrue([
+      for rs in github_repository_ruleset.main :
+      length([for b in rs.bypass_actors : b if b.actor_type == "OrganizationAdmin" && b.bypass_mode == "pull_request"]) == 1
+    ])
+    error_message = "Every main ruleset keeps the org admin pull_request bypass."
+  }
+
+  assert {
+    condition = alltrue([
+      for rs in github_repository_ruleset.main :
+      alltrue([for b in rs.bypass_actors : b.bypass_mode == "always" if b.actor_type == "Integration"])
+    ])
+    error_message = "App bypass actors are granted in always mode."
+  }
+}
+
+run "every_bypass_slug_resolves_to_an_app" {
+  command = plan
+
+  assert {
+    condition     = length(data.github_app.bypass) == length(local.bypass_slugs)
+    error_message = "Every app slug named under bypass in repositories.yaml must resolve to a GitHub App."
+  }
+
+  assert {
+    condition = alltrue([
+      for name, r in local.repos : alltrue([for ruleset in keys(r.bypass) : contains(local.bypass_rulesets, ruleset)])
+    ])
+    error_message = "bypass keys must be one of ${join(", ", local.bypass_rulesets)}."
   }
 }
 
@@ -81,19 +112,27 @@ run "every_repo_needs_a_code_owner_approval_and_sre_maintain" {
   }
 }
 
-run "only_atlantis_merges_atlantis_repos" {
+run "only_named_apps_merge_their_repos" {
   command = plan
 
   assert {
-    condition     = toset(keys(github_repository_ruleset.merge)) == toset(keys(local.atlantis_repos))
-    error_message = "Every atlantis repo needs the merge ruleset, and only those."
+    condition     = toset(keys(github_repository_ruleset.merge)) == toset(keys(local.merge_repos))
+    error_message = "A repo gets the merge ruleset exactly when it names apps under bypass.merge."
+  }
+
+  assert {
+    condition = alltrue([
+      for name, rs in github_repository_ruleset.merge :
+      rs.rules[0].update && length(rs.bypass_actors) == length(local.repos[name].bypass.merge)
+    ])
+    error_message = "The merge ruleset restricts updates to the apps named by bypass.merge."
   }
 
   assert {
     condition = alltrue([
       for rs in github_repository_ruleset.merge :
-      rs.rules[0].update && length(rs.bypass_actors) == 1 && rs.bypass_actors[0].actor_type == "Integration" && rs.bypass_actors[0].actor_id == 777
+      alltrue([for b in rs.bypass_actors : b.actor_type == "Integration" && b.bypass_mode == "always"])
     ])
-    error_message = "The merge ruleset restricts updates to the Atlantis App alone."
+    error_message = "Only apps may merge an atlantis repo: no admin bypass on the merge ruleset."
   }
 }
