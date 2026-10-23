@@ -22,9 +22,9 @@ run "every_repo_gets_its_rulesets" {
   assert {
     condition = alltrue([
       for kind in [github_repository_ruleset.release, github_repository_ruleset.hotfix, github_repository_ruleset.tags] :
-      length(kind) == length(local.app_repos)
+      length(kind) == length(local.service_repos)
     ])
-    error_message = "Every app repository needs release, releases/** and tag rulesets."
+    error_message = "Every service repository needs release, releases/** and tag rulesets."
   }
 
   assert {

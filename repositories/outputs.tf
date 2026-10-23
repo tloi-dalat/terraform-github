@@ -3,9 +3,9 @@ output "rulesets" {
   value = {
     for name, r in local.repos : name => compact([
       "main",
-      contains(keys(local.app_repos), name) ? "release" : "",
-      contains(keys(local.app_repos), name) ? "releases/**" : "",
-      contains(keys(local.app_repos), name) ? "tags X.Y.Z" : "",
+      contains(keys(local.service_repos), name) ? "release" : "",
+      contains(keys(local.service_repos), name) ? "releases/**" : "",
+      contains(keys(local.service_repos), name) ? "tags X.Y.Z" : "",
     ])
   }
 }

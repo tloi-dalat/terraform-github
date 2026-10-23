@@ -1,5 +1,5 @@
 locals {
-  profiles        = ["library", "gitops", "app"]
+  profiles        = ["platform", "service"]
   bypass_rulesets = ["main", "release", "merge"]
 
   repos = {
@@ -24,7 +24,7 @@ locals {
     for repo, r in local.repos : { for team, permission in r.teams : "${repo}/${team}" => { repo = repo, team = team, permission = permission } }
   ]...)
 
-  app_repos = { for name, r in local.repos : name => r if r.profile == "app" }
+  service_repos = { for name, r in local.repos : name => r if r.profile == "service" }
 
   merge_repos = { for name, r in local.repos : name => r if length(try(r.bypass.merge, [])) > 0 }
 

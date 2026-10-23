@@ -5,7 +5,7 @@
 
 ```yaml
 quiz:
-  profile: app
+  profile: service
   checks:
     main: [lint, test]
     release: [lint, test, check-source / source]
@@ -29,9 +29,8 @@ Always on: PR before merging, stale approvals dismissed on new commits, no force
 
 | Profile | `main` | `release` | `releases/**` | tags `X.Y.Z` |
 |---|---|---|---|---|
-| `library` | the rules above | | | |
-| `gitops` | the rules above | | | |
-| `app` | the rules above | PR from `main` only (`check-source / source`), the same PR rules and its own checks | direct pushes allowed (hotfixes), no deletion or force push | can't be moved or deleted |
+| `platform` | the rules above | | | |
+| `service` | the rules above | PR from `main` only (`check-source / source`), the same PR rules and its own checks | direct pushes allowed (hotfixes), no deletion or force push | can't be moved or deleted |
 
 ## Merge methods
 
@@ -51,18 +50,18 @@ at plan time, so adding a bot is one line and the whole org's bypass surface is 
 
 ```yaml
 control-plane:
-  profile: gitops
+  profile: platform
   bypass:
     main: [tloi-ci]        # the bot may push to main
 
 terraform-github:
-  profile: library
+  profile: platform
   bypass:
     merge: [tloi-atlantis] # only Atlantis may merge
 ```
 
 Apps bypass in `always` mode (they push directly); org admins keep their `pull_request` bypass on `main` and
-`release` on top of whatever is listed. An unknown key (`maim:`) or a `release` list on a non-`app` repo fails the
+`release` on top of whatever is listed. An unknown key (`maim:`) or a `release` list on a non-`service` repo fails the
 plan rather than silently doing nothing.
 
 ### `merge`
@@ -83,7 +82,7 @@ Who must approve is in each repo's `.github/CODEOWNERS`. A code owner needs writ
 |---|---|
 | control-plane | `sre` or `swe`; `.github/` and `bootstrap/` only `sre` |
 | charts, reusable-workflow, terraform-*, .github, status | `sre` |
-| app repos | `swe`; `.github/` only `sre` |
+| service repos | `swe`; `.github/` only `sre` |
 
 ## Repository settings
 
