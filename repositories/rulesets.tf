@@ -1,3 +1,9 @@
+data "github_app" "bypass" {
+  for_each = local.bypass_slugs
+
+  slug = each.key
+}
+
 resource "github_repository_ruleset" "main" {
   for_each = local.repos
 
@@ -14,7 +20,7 @@ resource "github_repository_ruleset" "main" {
   }
 
   dynamic "bypass_actors" {
-    for_each = concat(local.admin_bypass, each.value.profile == "gitops" ? local.ci_app_bypass : [])
+    for_each = concat(local.admin_bypass, try(local.app_bypass[each.key].main, []))
     content {
       actor_type  = bypass_actors.value.actor_type
       actor_id    = bypass_actors.value.actor_id
@@ -59,6 +65,14 @@ resource "github_repository_ruleset" "main" {
       condition     = try(each.value.teams.sre, "") == "maintain"
       error_message = "${each.key}: list its teams in repositories.yaml, with sre: maintain (sre owns CI and reviews)."
     }
+    precondition {
+      condition     = alltrue([for ruleset in keys(each.value.bypass) : contains(local.bypass_rulesets, ruleset)])
+      error_message = "${each.key}: bypass keys must be one of ${join(", ", local.bypass_rulesets)}, got ${join(", ", keys(each.value.bypass))}."
+    }
+    precondition {
+      condition     = length(try(each.value.bypass.release, [])) == 0 || each.value.profile == "app"
+      error_message = "${each.key}: only app repositories have a release ruleset, so bypass.release does nothing here."
+    }
   }
 }
 
@@ -78,7 +92,7 @@ resource "github_repository_ruleset" "release" {
   }
 
   dynamic "bypass_actors" {
-    for_each = local.admin_bypass
+    for_each = concat(local.admin_bypass, try(local.app_bypass[each.key].release, []))
     content {
       actor_type  = bypass_actors.value.actor_type
       actor_id    = bypass_actors.value.actor_id
@@ -156,12 +170,8 @@ resource "github_repository_ruleset" "tags" {
   }
 }
 
-data "github_app" "atlantis" {
-  slug = "tloi-atlantis"
-}
-
 resource "github_repository_ruleset" "merge" {
-  for_each = local.atlantis_repos
+  for_each = local.merge_repos
 
   repository  = each.key
   name        = "merge"
@@ -175,10 +185,13 @@ resource "github_repository_ruleset" "merge" {
     }
   }
 
-  bypass_actors {
-    actor_type  = "Integration"
-    actor_id    = tonumber(data.github_app.atlantis.id)
-    bypass_mode = "always"
+  dynamic "bypass_actors" {
+    for_each = local.app_bypass[each.key].merge
+    content {
+      actor_type  = bypass_actors.value.actor_type
+      actor_id    = bypass_actors.value.actor_id
+      bypass_mode = bypass_actors.value.bypass_mode
+    }
   }
 
   rules {

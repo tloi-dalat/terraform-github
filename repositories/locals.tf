@@ -1,5 +1,6 @@
 locals {
-  profiles = ["library", "gitops", "app"]
+  profiles        = ["library", "gitops", "app"]
+  bypass_rulesets = ["main", "release", "merge"]
 
   repos = {
     for name, r in yamldecode(file("${path.module}/repositories.yaml")) : name => {
@@ -15,7 +16,7 @@ locals {
       checks_main       = flatten(try(r.checks.main, []))
       checks_release    = flatten(try(r.checks.release, []))
       teams             = try(r.teams, {})
-      atlantis          = try(r.atlantis, false)
+      bypass            = try(r.bypass, {})
     }
   }
 
@@ -25,9 +26,17 @@ locals {
 
   app_repos = { for name, r in local.repos : name => r if r.profile == "app" }
 
-  atlantis_repos = { for name, r in local.repos : name => r if r.atlantis }
+  merge_repos = { for name, r in local.repos : name => r if length(try(r.bypass.merge, [])) > 0 }
+
+  bypass_slugs = toset(flatten([for r in local.repos : flatten(values(r.bypass))]))
 
   admin_bypass = [{ actor_type = "OrganizationAdmin", actor_id = 1, bypass_mode = "pull_request" }]
 
-  ci_app_bypass = [{ actor_type = "Integration", actor_id = var.ci_app_id, bypass_mode = "always" }]
+  app_bypass = {
+    for name, r in local.repos : name => {
+      for ruleset, slugs in r.bypass : ruleset => [
+        for slug in slugs : { actor_type = "Integration", actor_id = tonumber(data.github_app.bypass[slug].id), bypass_mode = "always" }
+      ]
+    }
+  }
 }

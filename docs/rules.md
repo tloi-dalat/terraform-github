@@ -23,13 +23,14 @@ quiz:
 | `merge_methods.main` | `[squash]` | Allowed merge methods into `main` (`merge`, `squash`, `rebase`) |
 | `merge_methods.release` | `[merge]` | Allowed merge methods into `release` |
 | `checks.main`, `checks.release` | `[]` | Required status checks, named exactly as on a PR: the job's name, or for a reusable workflow `<caller job> / <its job>` (e.g. `check-docker / docker`). YAML anchors can reuse a list |
+| `bypass` | `{}` | Ruleset name (`main`, `release`, `merge`) → GitHub App slugs that may bypass it. See [Bypass](#bypass) |
 
 Always on: PR before merging, stale approvals dismissed on new commits, no force pushes, no deletion.
 
 | Profile | `main` | `release` | `releases/**` | tags `X.Y.Z` |
 |---|---|---|---|---|
 | `library` | the rules above | | | |
-| `gitops` | the rules above; the CI App may push (control-plane's bot commits) | | | |
+| `gitops` | the rules above | | | |
 | `app` | the rules above | PR from `main` only (`check-source / source`), the same PR rules and its own checks | direct pushes allowed (hotfixes), no deletion or force push | can't be moved or deleted |
 
 ## Merge methods
@@ -43,12 +44,33 @@ Always on: PR before merging, stale approvals dismissed on new commits, no force
 Org admins can merge a PR that fails a rule (`bypass_mode: pull_request`); nobody can push past one. Skipped
 required checks count as passing.
 
-## Atlantis repos
+## Bypass
 
-`atlantis: true` adds a `merge` ruleset on `main`: only the `tloi-atlantis` App can update it, so a PR merges only
-when Atlantis applies it. A PR without Terraform changes still goes through Atlantis: `atlantis plan -p <project>`,
-then `atlantis apply` (no changes) merges it. If Atlantis is down, an org owner disables the `merge` ruleset in the
-repo's Settings → Rules; the next apply turns it back on.
+`bypass` names, per ruleset, the GitHub Apps allowed past it. Apps are named by slug and resolved to their App ID
+at plan time, so adding a bot is one line and the whole org's bypass surface is readable here.
+
+```yaml
+control-plane:
+  profile: gitops
+  bypass:
+    main: [tloi-ci]        # the bot may push to main
+
+terraform-github:
+  profile: library
+  bypass:
+    merge: [tloi-atlantis] # only Atlantis may merge
+```
+
+Apps bypass in `always` mode (they push directly); org admins keep their `pull_request` bypass on `main` and
+`release` on top of whatever is listed. An unknown key (`maim:`) or a `release` list on a non-`app` repo fails the
+plan rather than silently doing nothing.
+
+### `merge`
+
+A non-empty `bypass.merge` creates a `merge` ruleset on `main` that only those Apps can update — so a PR merges
+only when Atlantis applies it. This ruleset has no admin bypass. A PR without Terraform changes still goes through
+Atlantis: `atlantis plan -p <project>`, then `atlantis apply` (no changes) merges it. If Atlantis is down, an org
+owner disables the `merge` ruleset in the repo's Settings → Rules; the next apply turns it back on.
 
 ## Teams
 
@@ -86,5 +108,7 @@ approve PRs.
 ## Gotchas
 
 - A required check that never runs blocks every PR. Add it here only after its workflow is merged in that repo.
-- control-plane's receiver must push with the CI App, or dev deploys are rejected by `main`.
+- control-plane's receiver must push with the CI App listed in its `bypass.main`, or dev deploys are rejected by `main`.
+- A bypass slug that doesn't resolve fails the plan for every repo, not just its own: the App lookup is one
+  `for_each` over the union of all slugs.
 - Tag creation isn't restricted: `release-tag.yaml` creates tags with `GITHUB_TOKEN`. Only moving and deleting are.
