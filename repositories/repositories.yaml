@@ -4,7 +4,7 @@ online-judge:
     sre: maintain
     swe: push
   checks:
-    main: &oj-checks
+    main: &online-judge-checks
       - lint
       - unit
       - styles
@@ -17,7 +17,7 @@ online-judge:
       - check-dependencies / dependencies
       - check-title / title
     release:
-      - *oj-checks
+      - *online-judge-checks
       - check-source / source
 
 judge-server:
@@ -26,7 +26,7 @@ judge-server:
     sre: maintain
     swe: push
   checks:
-    main: &judge-checks
+    main: &judge-server-checks
       - lint
       - mypy
       - test-sdist
@@ -35,7 +35,21 @@ judge-server:
       - check-dependencies / dependencies
       - check-title / title
     release:
-      - *judge-checks
+      - *judge-server-checks
+      - check-source / source
+
+landing-page:
+  profile: service
+  teams:
+    sre: maintain
+    swe: push
+  checks:
+    main: &landing-page-checks
+      - check-workflows / workflows
+      - check-docker / docker
+      - check-title / title
+    release:
+      - *landing-page-checks
       - check-source / source
 
 control-plane:
