@@ -52,6 +52,18 @@ landing-page:
       - *landing-page-checks
       - check-source / source
 
+maintenance-page:
+  profile: service
+  teams:
+    sre: maintain
+    swe: push
+  checks:
+    main: &maintenance-page-checks
+      - check-title / title
+    release:
+      - *maintenance-page-checks
+      - check-source / source
+
 control-plane:
   profile: platform
   bypass:
