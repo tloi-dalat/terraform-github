@@ -20,3 +20,10 @@ teams:
       - NotTHDAnh
       - tahoangphuc111
       - letuanthinh387-byte
+  qae:
+    name: QAE
+    description: Quality Assurance Engineer
+    maintainers:
+      - kitsunehivern
+    members:
+      - khiempham06
