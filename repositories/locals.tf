@@ -30,8 +30,6 @@ locals {
 
   bypass_slugs = toset(flatten([for r in local.repos : flatten(values(r.bypass))]))
 
-  admin_bypass = [{ actor_type = "OrganizationAdmin", actor_id = 1, bypass_mode = "pull_request" }]
-
   app_bypass = {
     for name, r in local.repos : name => {
       for ruleset, slugs in r.bypass : ruleset => [

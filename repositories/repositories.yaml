@@ -1,5 +1,7 @@
 online-judge:
   profile: service
+  bypass:
+    main: [tloi-ci]
   teams:
     sre: maintain
     swe: push
