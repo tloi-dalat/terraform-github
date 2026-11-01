@@ -48,10 +48,10 @@ run "main_bypass_actors_come_from_the_yaml" {
 
   assert {
     condition = alltrue([
-      for rs in github_repository_ruleset.main :
-      length([for b in rs.bypass_actors : b if b.actor_type == "OrganizationAdmin" && b.bypass_mode == "pull_request"]) == 1
+      for rs in concat(values(github_repository_ruleset.main), values(github_repository_ruleset.release)) :
+      alltrue([for b in rs.bypass_actors : b.actor_type == "Integration"])
     ])
-    error_message = "Every main ruleset keeps the org admin pull_request bypass."
+    error_message = "Only GitHub Apps may bypass the main and release rulesets: no org admin or user bypass."
   }
 
   assert {

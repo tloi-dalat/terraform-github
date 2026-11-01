@@ -37,10 +37,11 @@ Always on: PR before merging, stale approvals dismissed on new commits, no force
 - `main`: squash only, so the PR title becomes the commit message.
 - `release`: merge commit only. A squash leaves `release` with a commit `main` doesn't have, and every later
   `main` → `release` PR shows old changes again or conflicts.
-- Upstream syncs into `main` need a merge commit: an org admin ticks "bypass rules" on the PR and picks
-  **Create a merge commit**.
+- Upstream syncs into `main` need a merge commit. online-judge's `sync` workflow (reusable-workflow
+  `upstream-sync.yaml`, run by hand) opens `chore: sync upstream` from the `sync` branch; once its required checks
+  pass and it is approved, `tloi-ci` merges it with a merge commit through its `main` bypass.
 
-Org admins can merge a PR that fails a rule (`bypass_mode: pull_request`); nobody can push past one. Skipped
+Nobody can merge a PR that fails a rule or push past one; only the Apps listed under `bypass` can. Skipped
 required checks count as passing.
 
 ## Bypass
@@ -60,14 +61,14 @@ terraform-github:
     merge: [tloi-atlantis] # only Atlantis may merge
 ```
 
-Apps bypass in `always` mode (they push directly); org admins keep their `pull_request` bypass on `main` and
-`release` on top of whatever is listed. An unknown key (`maim:`) or a `release` list on a non-`service` repo fails the
-plan rather than silently doing nothing.
+Apps bypass in `always` mode (they push or merge directly). There is no org admin or user bypass, and the tests
+fail if one is added. An unknown key (`maim:`) or a `release` list on a non-`service` repo fails the plan rather than
+silently doing nothing.
 
 ### `merge`
 
 A non-empty `bypass.merge` creates a `merge` ruleset on `main` that only those Apps can update — so a PR merges
-only when Atlantis applies it. This ruleset has no admin bypass. A PR without Terraform changes still goes through
+only when Atlantis applies it. A PR without Terraform changes still goes through
 Atlantis: `atlantis plan -p <project>`, then `atlantis apply` (no changes) merges it. If Atlantis is down, an org
 owner disables the `merge` ruleset in the repo's Settings → Rules; the next apply turns it back on.
 

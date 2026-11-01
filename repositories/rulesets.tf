@@ -20,7 +20,7 @@ resource "github_repository_ruleset" "main" {
   }
 
   dynamic "bypass_actors" {
-    for_each = concat(local.admin_bypass, try(local.app_bypass[each.key].main, []))
+    for_each = try(local.app_bypass[each.key].main, [])
     content {
       actor_type  = bypass_actors.value.actor_type
       actor_id    = bypass_actors.value.actor_id
@@ -92,7 +92,7 @@ resource "github_repository_ruleset" "release" {
   }
 
   dynamic "bypass_actors" {
-    for_each = concat(local.admin_bypass, try(local.app_bypass[each.key].release, []))
+    for_each = try(local.app_bypass[each.key].release, [])
     content {
       actor_type  = bypass_actors.value.actor_type
       actor_id    = bypass_actors.value.actor_id
