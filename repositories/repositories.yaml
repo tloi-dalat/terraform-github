@@ -7,9 +7,9 @@ online-judge:
     swe: push
   checks:
     main: &online-judge-checks
-      - lint
-      - unit
-      - styles
+      - check-flake8 / flake8
+      - check-tests / tests
+      - check-node / node
       - check-migrations / migrations
       - check-i18n / i18n
       - check-i18n-django / i18n
@@ -24,14 +24,17 @@ online-judge:
 
 judge-server:
   profile: service
+  bypass:
+    main: [tloi-ci]
   teams:
     sre: maintain
     swe: push
   checks:
     main: &judge-server-checks
-      - lint
-      - mypy
-      - test-sdist
+      - check-flake8 / flake8
+      - check-clang-format / clang-format
+      - check-mypy / mypy
+      - check-sdist / sdist
       - check-workflows / workflows
       - check-docker / docker
       - check-dependencies / dependencies
