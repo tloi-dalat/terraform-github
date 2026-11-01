@@ -37,9 +37,9 @@ Always on: PR before merging, stale approvals dismissed on new commits, no force
 - `main`: squash only, so the PR title becomes the commit message.
 - `release`: merge commit only. A squash leaves `release` with a commit `main` doesn't have, and every later
   `main` → `release` PR shows old changes again or conflicts.
-- Upstream syncs into `main` need a merge commit. online-judge's `sync` workflow (reusable-workflow
-  `upstream-sync.yaml`, run by hand) opens `chore: sync upstream` from the `sync` branch; once its required checks
-  pass and it is approved, `tloi-ci` merges it with a merge commit through its `main` bypass.
+- Upstream syncs into `main` need a merge commit. the `sync` workflow of online-judge and judge-server
+  (reusable-workflow `upstream-sync.yaml`, run by hand) opens `chore: sync upstream` from the `sync` branch; once its
+  required checks pass and it is approved, `tloi-ci` merges it with a merge commit through its `main` bypass.
 
 Nobody can merge a PR that fails a rule or push past one; only the Apps listed under `bypass` can. Skipped
 required checks count as passing.
