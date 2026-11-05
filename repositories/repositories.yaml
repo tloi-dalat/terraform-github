@@ -43,6 +43,25 @@ judge-server:
       - *judge-server-checks
       - check-source / source
 
+online-quiz:
+  profile: service
+  teams:
+    sre: maintain
+    swe: push
+  checks:
+    main: &online-quiz-checks
+      - check-flake8 / flake8
+      - check-tests / tests
+      - check-migrations / migrations
+      - check-templates / templates
+      - check-workflows / workflows
+      - check-docker / docker
+      - check-dependencies / dependencies
+      - check-title / title
+    release:
+      - *online-quiz-checks
+      - check-source / source
+
 landing-page:
   profile: service
   teams:
