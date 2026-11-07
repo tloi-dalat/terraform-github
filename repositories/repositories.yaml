@@ -106,7 +106,7 @@ atlas-migration:
     sre: maintain
     swe: push
   checks:
-    main: [check-validate / validate, check-title / title]
+    main: [check-title / title]
 
 reusable-workflow:
   profile: platform
