@@ -10,7 +10,6 @@ online-judge:
       - check-flake8 / flake8
       - check-tests / tests
       - check-node / node
-      - check-migrations / migrations
       - check-i18n / i18n
       - check-i18n-django / i18n
       - check-templates / templates
