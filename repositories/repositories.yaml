@@ -100,6 +100,14 @@ control-plane:
       - lint / lint
       - check-title / title
 
+atlas-migration:
+  profile: platform
+  teams:
+    sre: maintain
+    swe: push
+  checks:
+    main: [check-title / title]
+
 reusable-workflow:
   profile: platform
   teams:
