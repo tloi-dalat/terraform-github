@@ -6,17 +6,19 @@ online-judge:
     sre: maintain
     swe: push
   checks:
-    main: &online-judge-checks
-      - check-flake8 / flake8
-      - check-tests / tests
-      - check-node / node
-      - check-i18n / i18n
-      - check-i18n-django / i18n
-      - check-templates / templates
-      - check-workflows / workflows
-      - check-docker / docker
-      - check-dependencies / dependencies
-      - check-title / title
+    main:
+      - &online-judge-checks
+        - check-flake8 / flake8
+        - check-tests / tests
+        - check-node / node
+        - check-i18n / i18n
+        - check-i18n-django / i18n
+        - check-templates / templates
+        - check-workflows / workflows
+        - check-docker / docker
+        - check-dependencies / dependencies
+        - check-title / title
+      - atlas-generator / migration-status
     release:
       - *online-judge-checks
       - check-source / source
