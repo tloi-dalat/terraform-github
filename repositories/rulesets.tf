@@ -86,6 +86,8 @@ resource "github_repository_ruleset" "release" {
   target      = "branch"
   enforcement = "active"
 
+  depends_on = [github_branch.release]
+
   conditions {
     ref_name {
       include = ["refs/heads/release"]

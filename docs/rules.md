@@ -109,6 +109,8 @@ exists:
 | `.github/CODEOWNERS` | all | `*` swe, `/.github/` sre | `*` sre |
 | `.github/workflows/pr-check.yaml` | those requiring `check-title / title` | `check-title`, `check-source` | `check-title` |
 
+A `service` repo also gets a `release` branch from `main`, before its `release` ruleset exists.
+
 The templates are in `repositories/bootstrap/`. Terraform only creates these files: later edits in a repo are kept, and the files
 are never deleted. Deleting or renaming one in a repo makes the next apply fail until it is restored. The Terraform app needs
 Contents and Workflows: write.

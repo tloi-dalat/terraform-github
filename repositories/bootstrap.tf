@@ -31,3 +31,24 @@ resource "github_repository_file" "pr_check" {
     ignore_changes  = [content, commit_message, commit_author, commit_email]
   }
 }
+
+import {
+  for_each = toset(var.import_release_branches ? ["online-judge", "judge-server", "online-quiz", "landing-page", "maintenance-page", "hall-of-fame"] : [])
+  to       = github_branch.release[each.key]
+  id       = "${each.key}:release"
+}
+
+resource "github_branch" "release" {
+  for_each = local.service_repos
+
+  repository    = github_repository.this[each.key].name
+  branch        = "release"
+  source_branch = "main"
+
+  depends_on = [github_repository_file.codeowners, github_repository_file.pr_check]
+
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = all
+  }
+}
