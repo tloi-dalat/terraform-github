@@ -19,8 +19,3 @@ variable "github_app_private_key" {
   type        = string
   sensitive   = true
 }
-
-variable "import_repositories" {
-  type    = bool
-  default = true
-}
