@@ -1,13 +1,13 @@
 import {
   for_each = var.import_files ? local.repos : {}
   to       = github_repository_file.codeowners[each.key]
-  id       = "${each.key}/.github/CODEOWNERS:main"
+  id       = "${each.key}:.github/CODEOWNERS:main"
 }
 
 import {
   for_each = var.import_files ? local.title_check_repos : {}
   to       = github_repository_file.pr_check[each.key]
-  id       = "${each.key}/.github/workflows/pr-check.yaml:main"
+  id       = "${each.key}:.github/workflows/pr-check.yaml:main"
 }
 
 resource "github_repository_file" "codeowners" {
