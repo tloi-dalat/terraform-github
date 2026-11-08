@@ -103,6 +103,7 @@ control-plane:
 
 atlas-migration:
   profile: platform
+  up_to_date: true
   teams:
     sre: maintain
     swe: push
