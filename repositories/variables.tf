@@ -24,8 +24,3 @@ variable "import_repositories" {
   type    = bool
   default = true
 }
-
-variable "import_files" {
-  type    = bool
-  default = true
-}
