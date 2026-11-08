@@ -33,7 +33,7 @@ resource "github_repository_file" "pr_check" {
 }
 
 import {
-  for_each = toset(var.import_release_branches ? ["online-judge", "judge-server", "online-quiz", "landing-page", "maintenance-page"] : [])
+  for_each = toset(var.import_release_branches ? ["online-judge", "judge-server", "online-quiz", "landing-page", "maintenance-page", "hall-of-fame"] : [])
   to       = github_branch.release[each.key]
   id       = "${each.key}:release"
 }
