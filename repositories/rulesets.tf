@@ -64,6 +64,10 @@ resource "github_repository_ruleset" "main" {
       error_message = "${each.key}: profile must be one of ${join(", ", local.profiles)}, got ${each.value.profile}."
     }
     precondition {
+      condition     = each.value.approvals >= 1 && each.value.code_owner_review
+      error_message = "${each.key}: main needs at least 1 approval and a code owner review."
+    }
+    precondition {
       condition     = try(each.value.teams.sre, "") == "maintain"
       error_message = "${each.key}: list its teams in repositories.yaml, with sre: maintain (sre owns CI and reviews)."
     }
