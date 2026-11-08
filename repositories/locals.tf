@@ -24,6 +24,8 @@ locals {
     for repo, r in local.repos : { for team, permission in r.teams : "${repo}/${team}" => { repo = repo, team = team, permission = permission } }
   ]...)
 
+  title_check_repos = { for name, r in local.repos : name => r if contains(r.checks_main, "check-title / title") }
+
   service_repos = { for name, r in local.repos : name => r if r.profile == "service" }
 
   merge_repos = { for name, r in local.repos : name => r if length(try(r.bypass.merge, [])) > 0 }
