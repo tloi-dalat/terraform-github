@@ -8,7 +8,6 @@ variables {
   github_app_id              = "1"
   github_app_installation_id = "1"
   github_app_private_key     = "mock"
-  import_repositories        = false
 }
 
 run "seeded_files_follow_the_yaml" {
@@ -39,7 +38,7 @@ run "bootstrap_templates_exist_for_every_profile" {
   command = plan
 
   assert {
-    condition     = alltrue([for p in local.profiles : fileexists("${path.module}/bootstrap/CODEOWNERS.${p}")])
-    error_message = "Every profile needs a bootstrap/CODEOWNERS.<profile> template."
+    condition     = alltrue([for p in local.profiles : fileexists("${path.module}/bootstrap/CODEOWNERS.${p}") && fileexists("${path.module}/bootstrap/pr-check.${p}.yaml")])
+    error_message = "Every profile needs bootstrap/CODEOWNERS.<profile> and bootstrap/pr-check.<profile>.yaml templates."
   }
 }
