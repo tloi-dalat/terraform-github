@@ -9,7 +9,6 @@ variables {
   github_app_installation_id = "1"
   github_app_private_key     = "mock"
   import_repositories        = false
-  import_files               = false
 }
 
 run "every_repo_gets_its_rulesets" {
