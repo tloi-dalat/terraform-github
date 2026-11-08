@@ -7,7 +7,8 @@ import {
 resource "github_repository" "this" {
   for_each = local.repos
 
-  name = each.key
+  name      = each.key
+  auto_init = true
 
   allow_merge_commit     = true
   allow_squash_merge     = true
@@ -34,6 +35,7 @@ resource "github_repository" "this" {
   lifecycle {
     prevent_destroy = true
     ignore_changes = [
+      auto_init,
       description,
       homepage_url,
       has_issues,

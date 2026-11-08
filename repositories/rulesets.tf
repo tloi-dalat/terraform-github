@@ -12,6 +12,8 @@ resource "github_repository_ruleset" "main" {
   target      = "branch"
   enforcement = "active"
 
+  depends_on = [github_repository_file.codeowners, github_repository_file.pr_check]
+
   conditions {
     ref_name {
       include = ["~DEFAULT_BRANCH"]
