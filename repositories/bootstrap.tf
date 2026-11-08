@@ -20,7 +20,7 @@ resource "github_repository_file" "pr_check" {
   repository          = github_repository.this[each.key].name
   branch              = "main"
   file                = ".github/workflows/pr-check.yaml"
-  content             = file("${path.module}/bootstrap/pr-check.yaml")
+  content             = file("${path.module}/bootstrap/pr-check.${each.value.profile}.yaml")
   commit_message      = "ci: add pr check"
   overwrite_on_create = false
 
