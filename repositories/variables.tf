@@ -19,3 +19,8 @@ variable "github_app_private_key" {
   type        = string
   sensitive   = true
 }
+
+variable "import_release_branches" {
+  type    = bool
+  default = true
+}
