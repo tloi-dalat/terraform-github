@@ -50,15 +50,16 @@ online-quiz:
     sre: maintain
     swe: push
   checks:
-    main: &online-quiz-checks
-      - check-flake8 / flake8
-      - check-tests / tests
-      - check-migrations / migrations
-      - check-templates / templates
-      - check-workflows / workflows
-      - check-docker / docker
-      - check-dependencies / dependencies
-      - check-title / title
+    main:
+      - &online-quiz-checks
+        - check-flake8 / flake8
+        - check-tests / tests
+        - check-templates / templates
+        - check-workflows / workflows
+        - check-docker / docker
+        - check-dependencies / dependencies
+        - check-title / title
+      - atlas-generator / migration-status
     release:
       - *online-quiz-checks
       - check-source / source
