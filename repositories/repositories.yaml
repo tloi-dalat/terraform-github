@@ -90,18 +90,6 @@ maintenance-page:
       - *maintenance-page-checks
       - check-source / source
 
-hall-of-fame:
-  profile: service
-  teams:
-    sre: maintain
-    swe: push
-  checks:
-    main: &hall-of-fame-checks
-      - check-title / title
-    release:
-      - *hall-of-fame-checks
-      - check-source / source
-
 control-plane:
   profile: platform
   bypass:
