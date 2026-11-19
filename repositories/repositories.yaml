@@ -139,6 +139,7 @@ terraform-cloudflare:
 
 terraform-tailscale:
   profile: platform
+  archived: true
   bypass:
     merge: [tloi-atlantis]
   teams:
