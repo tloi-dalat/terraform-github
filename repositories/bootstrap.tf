@@ -1,14 +1,3 @@
-import {
-  for_each = setsubtract(keys(local.repos), ["terraform-tailscale"])
-  to       = github_repository_file.dependabot[each.key]
-  id       = "${each.key}:.github/dependabot.yaml:main"
-}
-
-import {
-  to = github_repository_file.pr_check[".github"]
-  id = ".github:.github/workflows/pr-check.yaml:main"
-}
-
 resource "github_repository_file" "codeowners" {
   for_each = local.repos
 
