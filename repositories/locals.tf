@@ -5,6 +5,7 @@ locals {
   repos = {
     for name, r in yamldecode(file("${path.module}/repositories.yaml")) : name => {
       profile           = r.profile
+      archived          = try(r.archived, false)
       approvals         = try(r.approvals, 1)
       code_owner_review = try(r.code_owner_review, true)
       up_to_date        = try(r.up_to_date, false)

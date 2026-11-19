@@ -3,6 +3,7 @@ resource "github_repository" "this" {
 
   name      = each.key
   auto_init = true
+  archived  = each.value.archived
 
   allow_merge_commit     = true
   allow_squash_merge     = true
