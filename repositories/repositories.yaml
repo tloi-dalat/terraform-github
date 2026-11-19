@@ -137,6 +137,16 @@ terraform-cloudflare:
   checks:
     main: [check-terraform / terraform, check-title / title]
 
+terraform-tailscale:
+  profile: platform
+  bypass:
+    merge: [tloi-atlantis]
+  teams:
+    sre: maintain
+    swe: push
+  checks:
+    main: [check-terraform / terraform, check-title / title]
+
 terraform-github:
   profile: platform
   bypass:
@@ -152,3 +162,5 @@ terraform-github:
   teams:
     sre: maintain
     swe: push
+  checks:
+    main: [check-title / title]
